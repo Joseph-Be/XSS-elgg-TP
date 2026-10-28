@@ -1,0 +1,21 @@
+---
+# Basic configuration of all host devices
+
+- name: Install net-tools
+  apt:
+    name: net-tools
+    update_cache: yes
+
+- name: Install unzip
+  apt:
+    name: unzip
+
+- name: Install curl
+  apt:
+    name: curl
+    state: present
+
+- name: Install netcat
+  apt:
+    name: netcat-openbsd
+    state: present

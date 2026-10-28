@@ -1,0 +1,312 @@
+{
+  "title": "SEED XSS / Elgg Security Lab",
+  "description": "20-point CyberRangeCZ exercise based on the supplied SEED Labs Cross-Site Scripting Attack Lab.",
+  "prerequisites": [],
+  "outcomes": [
+    "Understand stored Cross-Site Scripting in a deliberately vulnerable web application.",
+    "Inspect HTTP requests and browser state with developer tools.",
+    "Understand cookie access, forged requests, profile modification, and self-propagating XSS.",
+    "Understand how Content Security Policy limits script execution.",
+    "Use APG-generated per-sandbox flags to prevent answer sharing."
+  ],
+  "state": "UNRELEASED",
+  "show_stepper_bar": true,
+  "levels": [
+    {
+      "title": "Introduction",
+      "level_type": "INFO_LEVEL",
+      "order": 0,
+      "estimated_duration": 2,
+      "minimal_possible_solve_time": null,
+      "content": "# Cross-Site Scripting Attack Lab \u2014 Elgg\n\nThis exercise is based on the supplied SEED Labs XSS/Elgg TP. The goal is to understand how a vulnerable web application can allow injected JavaScript to execute in another user's browser, how browser cookies and HTTP requests are involved, how forged requests can change application state, how an XSS worm can propagate, and how CSP limits script execution.\n\n**Important:** work only inside the provided CyberRange sandbox.\n\n## Environment\n\n- `attacker`: SEED Linux workstation with Firefox and the usual command-line tools.\n- `web-server`: SEED Linux server running the vulnerable Elgg application and the CSP experiment.\n- Elgg: `http://www.seed-server.com`\n- CSP sites: `http://www.example32a.com`, `http://www.example32b.com`, `http://www.example32c.com`\n\nThe web application intentionally has the XSS input protections disabled for this exercise, matching the purpose of the supplied TP.\n\n## Student accounts\n\nUse these only inside the lab:\n\n| Account | Password |\n|---|---|\n| `admin` | `seedelgg` |\n| `alice` | `seedalice` |\n| `boby` | `seedboby` |\n| `charlie` | `seedcharlie` |\n| `samy` | `seedsamy` |\n\nYou should inspect HTTP requests with Firefox Developer Tools \u2192 Network.\n\n## Important\n\nEvery sandbox has its own generated flags. Do not copy answers from another student. The seven submitted answers are unique to your sandbox."
+    },
+    {
+      "title": "Get Access",
+      "level_type": "ACCESS_LEVEL",
+      "order": 1,
+      "estimated_duration": 2,
+      "minimal_possible_solve_time": null,
+      "passkey": "start",
+      "cloud_content": "Your first task is to access the sandbox.\n\n1. In the topology, open **attacker** using the GUI.\n2. Log in with:\n   - username: `user`\n   - password: `Password123`\n3. Submit `start` to continue.\n\nThe web application is reachable from the attacker machine at `http://www.seed-server.com`."
+    },
+    {
+      "title": "Task 1 \u2014 Execute JavaScript in a victim context",
+      "level_type": "TRAINING_LEVEL",
+      "order": 2,
+      "estimated_duration": 8,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task1_flag",
+      "content": "## Objective\n\nDemonstrate a stored XSS vulnerability in Elgg.\n\n1. Log in as `samy`.\n2. Inspect the profile-editing interface and identify a field where HTML/JavaScript can be stored.\n3. Use the **Text/HTML** editing mode described in the TP.\n4. Construct a benign JavaScript payload that executes when another user views the infected profile.\n5. Log in as `alice` in a second tab/session and visit Samy's profile.\n6. Your payload should execute in Alice's browser and reveal the Task 1 value.\n\n**Flag:** submit the 12-character value revealed by the successful XSS execution.\n\nDo not submit the JavaScript code itself.",
+      "max_score": 3,
+      "solution": "A correct solution stores a JavaScript payload in Samy's profile and causes it to execute in Alice's browser; the unique answer is the Task 1 generated value.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "Find the injection point",
+          "content": "Use the profile field that accepts HTML when Text/HTML mode is selected.",
+          "hint_penalty": 0.5,
+          "order": 0
+        },
+        {
+          "title": "Think about the victim",
+          "content": "Your JavaScript must execute in Alice's browser, not just while editing Samy's profile.",
+          "hint_penalty": 1.0,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Task 2 \u2014 Read a victim's cookies",
+      "level_type": "TRAINING_LEVEL",
+      "order": 3,
+      "estimated_duration": 8,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task2_flag",
+      "content": "## Objective\n\nShow why an XSS payload executing in the victim's origin can access browser-readable cookies.\n\nUse the same Elgg profile-injection technique from Task 1, but this time the payload must read the browser's cookie string in Alice's session.\n\n1. Make sure Alice visits the infected Samy profile.\n2. Use JavaScript to inspect `document.cookie`.\n3. Identify the value belonging to the Task 2 lab cookie.\n4. Submit only that 12-character value.\n\nDo not submit another student's cookie value; every sandbox has a different one.",
+      "max_score": 3,
+      "solution": "A correct solution reads Alice's browser-readable cookies from the XSS context and extracts the cookie labelled for Task 2.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "Browser API",
+          "content": "The TP discusses the browser cookie API. The relevant JavaScript property is available to page scripts.",
+          "hint_penalty": 0.5,
+          "order": 0
+        },
+        {
+          "title": "Separate the flags",
+          "content": "Alice has more than one lab cookie; identify the one labelled for Task 2.",
+          "hint_penalty": 1.0,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [
+        {
+          "state_name": "xss_task1",
+          "prereq_state": [],
+          "cmd": "curl http://www.seed-server.com/",
+          "cmd_type": "bash-command",
+          "cmd_regex": "curl .*seed-server.*",
+          "optional": true
+        }
+      ],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Task 3 \u2014 Exfiltrate data with an HTTP request",
+      "level_type": "TRAINING_LEVEL",
+      "order": 4,
+      "estimated_duration": 10,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task3_flag",
+      "content": "## Objective\n\nReproduce the exfiltration idea from the TP: JavaScript running in the victim's browser causes an outbound HTTP GET request containing data.\n\n1. Start a listener on the attacker machine.\n2. Create an XSS payload that causes Alice's browser to make an HTTP request to your listener.\n3. Include the relevant cookie value in the request.\n4. Inspect the incoming request on the attacker machine.\n5. Submit the 12-character Task 3 value.\n\nYour listener should receive the request only from the isolated lab network.",
+      "max_score": 4,
+      "solution": "A correct solution starts a listener and uses an XSS-generated resource request to send Alice's relevant cookie value to the listener.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "HTTP primitive",
+          "content": "The TP uses a request generated by loading a resource from the attacker's machine.",
+          "hint_penalty": 1.0,
+          "order": 0
+        },
+        {
+          "title": "Inspect the request",
+          "content": "Use your listener output to see the query string sent by Alice's browser.",
+          "hint_penalty": 1.5,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [
+        {
+          "state_name": "xss_task2",
+          "prereq_state": [
+            "xss_task1"
+          ],
+          "cmd": "echo",
+          "cmd_type": "bash-command",
+          "cmd_regex": "echo.*",
+          "optional": true
+        }
+      ],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Task 4 \u2014 Forge a friend request",
+      "level_type": "TRAINING_LEVEL",
+      "order": 5,
+      "estimated_duration": 10,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task4_flag",
+      "content": "## Objective\n\nFollowing the TP's Task 4, make the victim's browser issue the same type of request that Elgg normally uses when a user adds another user as a friend.\n\n1. Log in as `alice`.\n2. Use Firefox Developer Tools \u2192 Network.\n3. Observe a legitimate friend-add operation.\n4. Identify the request URL, HTTP method, and parameters/tokens.\n5. Return to the stored XSS in Samy's profile.\n6. Forge the corresponding request from Alice's browser so that Samy becomes a friend.\n7. Open Alice's friends page and verify that Samy is present.\n8. Submit the Task 4 verification value displayed on the page.\n\nThe task is about understanding and reproducing the application's request, not about guessing the value.",
+      "max_score": 3,
+      "solution": "A correct solution observes the legitimate Elgg friend-add request, reproduces it from XSS, and verifies that Samy appears in Alice's friends.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "Observe first",
+          "content": "Perform a legitimate friend-add operation while the Network panel is open.",
+          "hint_penalty": 0.5,
+          "order": 0
+        },
+        {
+          "title": "Tokens",
+          "content": "The request contains Elgg's timestamp/token parameters.",
+          "hint_penalty": 1.0,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [
+        {
+          "state_name": "xss_task3",
+          "prereq_state": [
+            "xss_task2"
+          ],
+          "cmd": "nc -l",
+          "cmd_type": "bash-command",
+          "cmd_regex": "nc .*",
+          "optional": true
+        }
+      ],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Task 5 \u2014 Modify the victim profile",
+      "level_type": "TRAINING_LEVEL",
+      "order": 6,
+      "estimated_duration": 10,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task5_flag",
+      "content": "## Objective\n\nReproduce the TP's profile-modification attack using a forged HTTP POST request.\n\n1. Inspect a normal profile update with Firefox Developer Tools.\n2. Identify the POST endpoint and required form parameters.\n3. From Samy's stored XSS, construct an Ajax POST that changes Alice's About Me text.\n4. The modified text must contain the exact marker `LAB5_PROFILE_UPDATED`.\n5. Refresh Alice's profile and verify that the marker is present.\n6. Submit the Task 5 verification value.\n\nPay attention to the anti-CSRF token values exposed by Elgg and to the `application/x-www-form-urlencoded` request body.",
+      "max_score": 3,
+      "solution": "A correct solution observes the normal profile-update POST and reproduces it from XSS so Alice's profile contains LAB5_PROFILE_UPDATED.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "Compare requests",
+          "content": "Capture a normal profile update before constructing the malicious request.",
+          "hint_penalty": 0.5,
+          "order": 0
+        },
+        {
+          "title": "Request body",
+          "content": "The update is an HTTP POST with form-encoded data.",
+          "hint_penalty": 1.0,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Task 6 \u2014 Build a self-propagating XSS worm",
+      "level_type": "TRAINING_LEVEL",
+      "order": 7,
+      "estimated_duration": 12,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task6_flag",
+      "content": "## Objective\n\nExtend the previous attack so the malicious code copies itself into the victim's profile, as described in the TP.\n\nYour worm must:\n\n1. execute in Alice's browser when she visits Samy's profile;\n2. perform the profile modification from Task 5;\n3. copy its own JavaScript into Alice's profile;\n4. contain the marker `LAB6_XSS_WORM`;\n5. remain functional when Alice's profile is later viewed.\n\nThe TP describes both the external-script and DOM approaches; for this exercise, use the **DOM approach**.\n\nAfter verifying that the marker and worm are present in Alice's profile, submit the Task 6 verification value.",
+      "max_score": 2,
+      "solution": "A correct solution implements the DOM-based self-copying worm and places LAB6_XSS_WORM in the propagated code/profile.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "Self-copy",
+          "content": "The TP's DOM approach retrieves the contents of the script element and reconstructs the surrounding tags.",
+          "hint_penalty": 1.0,
+          "order": 0
+        },
+        {
+          "title": "Marker",
+          "content": "Your copied code must contain `LAB6_XSS_WORM`.",
+          "hint_penalty": 1.5,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Task 7 \u2014 Defeat XSS with Content Security Policy",
+      "level_type": "TRAINING_LEVEL",
+      "order": 8,
+      "estimated_duration": 12,
+      "minimal_possible_solve_time": null,
+      "answer": null,
+      "answer_variable_name": "task7_flag",
+      "content": "## Objective\n\nUse the CSP experiment from the TP to determine which JavaScript sources are permitted.\n\nVisit:\n\n- `http://www.example32a.com`\n- `http://www.example32b.com`\n- `http://www.example32c.com`\n\nInspect the CSP response headers and compare the behavior of:\n\n- inline scripts with matching/non-matching nonces;\n- inline scripts without a nonce;\n- scripts loaded from the same origin;\n- scripts loaded from `www.example60.com`;\n- scripts loaded from `www.example70.com`.\n\nThen modify the server-side configuration as required by the TP so that Areas **1, 2, 4, 5, and 6** display `OK` on the configured CSP test site.\n\nWhen all five required areas are `OK`, the page displays the Task 7 verification value.\n\nSubmit only that value.",
+      "max_score": 2,
+      "solution": "A correct solution modifies the CSP configuration so Areas 1, 2, 4, 5, and 6 are OK; the page then reveals the generated verification value.",
+      "solution_penalized": true,
+      "hints": [
+        {
+          "title": "Read the header",
+          "content": "Use Firefox Network tools to inspect the `Content-Security-Policy` response header.",
+          "hint_penalty": 0.5,
+          "order": 0
+        },
+        {
+          "title": "Allowed sources",
+          "content": "Compare the `script-src` directive with the origins used by Areas 4\u20136.",
+          "hint_penalty": 1.0,
+          "order": 1
+        }
+      ],
+      "incorrect_answer_limit": 10,
+      "attachments": [],
+      "variant_answers": true,
+      "reference_solution": [],
+      "mitre_techniques": [],
+      "expected_commands": [],
+      "commands_required": false
+    },
+    {
+      "title": "Final Review",
+      "level_type": "INFO_LEVEL",
+      "order": 9,
+      "estimated_duration": 2,
+      "minimal_possible_solve_time": null,
+      "content": "# Submission checklist\n\nYou should be able to explain:\n\n- what stored XSS is;\n- why the same-origin context matters;\n- why `document.cookie` can expose browser-readable cookies;\n- how a browser can be induced to send an HTTP request;\n- why the Elgg security tokens are needed for forged state-changing requests;\n- why a worm must copy itself into the victim's profile;\n- how CSP separates trusted script sources from untrusted injected data.\n\nThe supplied TP also asks students to explain the observations and include screenshots/code excerpts in their report. Your instructor may request the same report separately."
+    }
+  ],
+  "estimated_duration": 74,
+  "variant_sandboxes": true
+}

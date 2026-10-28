@@ -1,0 +1,37 @@
+---
+- name: Common configuration
+  hosts: hosts
+  become: yes
+  roles:
+    - hosts
+
+- name: Configure attacker
+  hosts: attacker
+  become: true
+  roles:
+    - role: user-access
+      user_access_username: user
+      user_access_password: Password123
+      user_access_sudo: True
+    - role: attacker
+
+- name: Configure XSS web server
+  hosts: web-server
+  become: true
+  roles:
+    - role: server
+
+- name: Configure logging
+  hosts:
+    - hosts
+  become: yes
+  vars:
+    sandbox_name: xss-elgg-cyberrange
+    central_syslog_ip: 78.128.251.179
+  roles:
+    - role: sandbox-logging
+      slf_destination_port: 514
+      slf_destination: "{{ central_syslog_ip }}"
+      slf_sandbox_id: "{{ global_sandbox_id | default(student_id) | default(0) }}"
+      slf_sandbox_name: "{{ global_sandbox_name | default(sandbox_name) }}"
+      slf_pool_id: "{{ global_pool_id | default(None) }}"

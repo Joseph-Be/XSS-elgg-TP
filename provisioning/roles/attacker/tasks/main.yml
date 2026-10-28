@@ -1,0 +1,21 @@
+---
+- name: Add lab host aliases
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  loop:
+    - "10.20.10.10 www.seed-server.com"
+    - "10.20.10.10 www.example32a.com"
+    - "10.20.10.10 www.example32b.com"
+    - "10.20.10.10 www.example32c.com"
+    - "10.20.10.10 www.example60.com"
+    - "10.20.10.10 www.example70.com"
+
+- name: Install Firefox and useful XSS-lab utilities
+  apt:
+    name:
+      - firefox
+      - curl
+      - netcat-openbsd
+    state: present
+    update_cache: yes

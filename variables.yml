@@ -1,0 +1,27 @@
+task1_flag:
+  type: string
+  length: 12
+
+task2_flag:
+  type: string
+  length: 12
+
+task3_flag:
+  type: string
+  length: 12
+
+task4_flag:
+  type: string
+  length: 12
+
+task5_flag:
+  type: string
+  length: 12
+
+task6_flag:
+  type: string
+  length: 12
+
+task7_flag:
+  type: string
+  length: 12

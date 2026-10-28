@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSP Experiment</title>
+</head>
+<body>
+<h2>CSP Experiment</h2>
+<p>1. Inline: Nonce 111-111-111:
+   <span id="area1">Failed</span></p>
+<p>2. Inline: Nonce 222-222-222:
+   <span id="area2">Failed</span></p>
+<p>3. Inline: No Nonce:
+   <span id="area3">Failed</span></p>
+<p>4. From self:
+   <span id="area4">Failed</span></p>
+<p>5. From www.example60.com:
+   <span id="area5">Failed</span></p>
+<p>6. From www.example70.com:
+   <span id="area6">Failed</span></p>
+
+<script type="text/javascript" nonce="111-111-111">
+document.getElementById("area1").innerHTML = "OK";
+</script>
+
+<script type="text/javascript" nonce="222-222-222">
+document.getElementById("area2").innerHTML = "OK";
+</script>
+
+<script type="text/javascript">
+document.getElementById("area3").innerHTML = "OK";
+</script>
+
+<script src="script_area4.js"></script>
+<script src="http://www.example60.com/script_area5.js"></script>
+<script src="http://www.example70.com/script_area6.js"></script>
+
+<script>
+window.addEventListener("load", function () {
+  var good =
+    document.getElementById("area1").innerText === "OK" &&
+    document.getElementById("area2").innerText === "OK" &&
+    document.getElementById("area4").innerText === "OK" &&
+    document.getElementById("area5").innerText === "OK" &&
+    document.getElementById("area6").innerText === "OK";
+
+  if (good) {
+    var p = document.createElement("p");
+    p.id = "csp-lab-flag";
+    p.innerHTML = "<strong>Task 7 verification:</strong> {{ task7_flag }}";
+    document.body.appendChild(p);
+  }
+});
+</script>
+</body>
+</html>

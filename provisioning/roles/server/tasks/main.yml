@@ -1,0 +1,68 @@
+---
+- name: Install Docker and Compose
+  apt:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+    update_cache: yes
+
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add XSS lab host aliases
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  loop:
+    - "10.20.10.10 www.seed-server.com"
+    - "10.20.10.10 www.example32a.com"
+    - "10.20.10.10 www.example32b.com"
+    - "10.20.10.10 www.example32c.com"
+    - "10.20.10.10 www.example60.com"
+    - "10.20.10.10 www.example70.com"
+
+- name: Create XSS lab directory
+  file:
+    path: /opt/xss-lab
+    state: directory
+    mode: "0755"
+
+- name: Copy supplied SEED XSS lab
+  copy:
+    src: Labsetup/
+    dest: /opt/xss-lab/Labsetup/
+
+- name: Render per-sandbox flag JavaScript
+  template:
+    src: Labsetup/image_www/elgg/lab_flags.js
+    dest: /opt/xss-lab/Labsetup/image_www/elgg/lab_flags.js
+    mode: "0644"
+
+- name: Render per-sandbox CSP page
+  template:
+    src: Labsetup/image_www/csp/index.html
+    dest: /opt/xss-lab/Labsetup/image_www/csp/index.html
+    mode: "0644"
+
+- name: Build the XSS lab images
+  command:
+    cmd: docker-compose build
+    chdir: /opt/xss-lab/Labsetup
+
+- name: Start the XSS lab
+  command:
+    cmd: docker-compose up -d
+    chdir: /opt/xss-lab/Labsetup
+
+- name: Wait for the web application
+  uri:
+    url: http://127.0.0.1/
+    status_code: 200
+  register: web_check
+  retries: 30
+  delay: 5
+  until: web_check.status == 200
