@@ -27,7 +27,7 @@
       "estimated_duration": 2,
       "minimal_possible_solve_time": null,
       "passkey": "start",
-      "cloud_content": "Your first task is to access the sandbox.\n\n1. In the topology, open **attacker** using the GUI.\n2. Log in with:\n   - username: `user`\n   - password: `Password123`\n3. Submit `start` to continue.\n\nThe web application is reachable from the attacker machine at `http://www.seed-server.com`."
+      "cloud_content": "Your first task is to access the sandbox.\n\n1. In the topology, open **attacker** using the GUI.\n2. Log in with:\n   - username: `seed`\n   - password: `dees`\n3. Submit `start` to continue.\n\nThe web application is reachable from the attacker machine at `http://www.seed-server.com`."
     },
     {
       "title": "Task 1 \u2014 Execute JavaScript in a victim context",
