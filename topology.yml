@@ -12,7 +12,7 @@ hosts:
       image: seed
       mgmt_user: seed
     flavor: m1.medium
-
+routers:
   - name: router
     base_box:
       image: debian-12-x86_64
