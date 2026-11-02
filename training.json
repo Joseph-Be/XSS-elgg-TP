@@ -100,7 +100,7 @@
           "cmd": "curl http://www.seed-server.com/",
           "cmd_type": "bash-command",
           "cmd_regex": "curl .*seed-server.*",
-          "optional": true
+          "optional": false
         }
       ],
       "mitre_techniques": [],
@@ -145,7 +145,7 @@
           "cmd": "echo",
           "cmd_type": "bash-command",
           "cmd_regex": "echo.*",
-          "optional": true
+          "optional": false
         }
       ],
       "mitre_techniques": [],
@@ -190,7 +190,7 @@
           "cmd": "nc -l",
           "cmd_type": "bash-command",
           "cmd_regex": "nc .*",
-          "optional": true
+          "optional": false
         }
       ],
       "mitre_techniques": [],
