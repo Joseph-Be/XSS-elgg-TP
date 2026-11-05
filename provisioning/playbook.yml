@@ -14,12 +14,14 @@
       user_access_password: dees
       user_access_sudo: True
     - role: attacker
+    - role: chrony
 
 - name: Configure XSS web server
   hosts: web-server
   become: true
   roles:
     - role: server
+    - role: chrony
 
 - name: Configure logging
   hosts:
