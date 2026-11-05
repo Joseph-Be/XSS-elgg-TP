@@ -12,7 +12,7 @@
     - role: user-access
       user_access_username: seed
       user_access_password: dees
-      user_access_sudo: True
+      user_access_sudo: False
     - role: attacker
     - role: chrony
 
