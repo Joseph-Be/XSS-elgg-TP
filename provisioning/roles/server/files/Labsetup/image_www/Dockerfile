@@ -27,4 +27,4 @@ COPY elgg/lab_flags.js /var/www/elgg/lab_flags.js
 
 # Load the flag helper after the page has loaded. The original Elgg
 # application remains otherwise unchanged.
-RUN printf '\n<script src="/lab_flags.js"></script>\n' >> /var/www/elgg/views/default/page/elements/head.php
+RUN printf '\n<script src="/lab_flags.js"></script>\n' >> $WWWDir/vendor/elgg/elgg/views/default/page/elements/head.php
