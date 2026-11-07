@@ -1,27 +1,27 @@
 task1_flag:
-  type: password
+  type: text
   length: 12
 
 task2_flag:
-  type: password
+  type: text
   length: 12
 
 task3_flag:
-  type: password
+  type: text
   length: 12
 
 task4_flag:
-  type: password
+  type: text
   length: 12
 
 task5_flag:
-  type: password
+  type: text
   length: 12
 
 task6_flag:
-  type: password
+  type: text
   length: 12
 
 task7_flag:
-  type: password
+  type: text
   length: 12
