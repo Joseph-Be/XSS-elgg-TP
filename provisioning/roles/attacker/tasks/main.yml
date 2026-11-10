@@ -1,4 +1,14 @@
 ---
+
+
+# Remove the incorrect SEED server mapping
+- name: Remove incorrect seed-server.com entry
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^10\.9\.0\.5\s+www\.seed-server\.com'
+    state: absent
+
+    
 - name: Add lab host aliases
   lineinfile:
     path: /etc/hosts
