@@ -13,10 +13,19 @@
     state: started
     enabled: yes
 
+# Remove the incorrect SEED server mapping
+- name: Remove incorrect seed-server.com entry
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^10\.9\.0\.5\s+www\.seed-server\.com'
+    state: absent
+
+# Add the correct XSS lab host aliases
 - name: Add XSS lab host aliases
   lineinfile:
     path: /etc/hosts
     line: "{{ item }}"
+    state: present
   loop:
     - "10.20.10.10 www.seed-server.com"
     - "10.20.10.10 www.example32a.com"
