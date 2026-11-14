@@ -22,8 +22,13 @@ COPY apache_csp.conf   /etc/apache2/sites-available
 RUN  a2ensite apache_csp.conf  
 
 
-# CyberRange-specific per-sandbox flag script.
-COPY elgg/lab_flags.js /var/www/elgg/lab_flags.js
+# CyberRange-specific flag checks.
+# The per-sandbox flags stay in /var/www/lab_private, outside every
+# DocumentRoot. The browser only gets lab_flags.js (no flag values) and
+# lab_check.php, which releases a flag once the database shows the attack
+# took effect.
+COPY lab_private /var/www/lab_private
+COPY elgg/lab_flags.js elgg/lab_check.php /var/www/elgg/
 
 # Load the flag helper after the page has loaded. The original Elgg
 # application remains otherwise unchanged.

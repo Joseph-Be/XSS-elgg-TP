@@ -35,22 +35,6 @@ document.getElementById("area3").innerHTML = "OK";
 <script src="http://www.example60.com/script_area5.js"></script>
 <script src="http://www.example70.com/script_area6.js"></script>
 
-<script>
-window.addEventListener("load", function () {
-  var good =
-    document.getElementById("area1").innerText === "OK" &&
-    document.getElementById("area2").innerText === "OK" &&
-    document.getElementById("area4").innerText === "OK" &&
-    document.getElementById("area5").innerText === "OK" &&
-    document.getElementById("area6").innerText === "OK";
-
-  if (good) {
-    var p = document.createElement("p");
-    p.id = "csp-lab-flag";
-    p.innerHTML = "<strong>Task 7 verification:</strong> {{ task7_flag }}";
-    document.body.appendChild(p);
-  }
-});
-</script>
+<script src="lab_csp.js"></script>
 </body>
 </html>

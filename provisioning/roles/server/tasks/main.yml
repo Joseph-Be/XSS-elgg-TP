@@ -45,16 +45,10 @@
     src: Labsetup/
     dest: /opt/xss-lab/Labsetup/
 
-- name: Render per-sandbox flag JavaScript
+- name: Render per-sandbox flags (kept outside the web roots)
   template:
-    src: Labsetup/image_www/elgg/lab_flags.js
-    dest: /opt/xss-lab/Labsetup/image_www/elgg/lab_flags.js
-    mode: "0644"
-
-- name: Render per-sandbox CSP page
-  template:
-    src: Labsetup/image_www/csp/index.html
-    dest: /opt/xss-lab/Labsetup/image_www/csp/index.html
+    src: Labsetup/image_www/lab_private/flags.php
+    dest: /opt/xss-lab/Labsetup/image_www/lab_private/flags.php
     mode: "0644"
 
 - name: Build the XSS lab images

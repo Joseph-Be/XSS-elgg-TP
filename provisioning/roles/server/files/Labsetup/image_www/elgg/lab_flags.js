@@ -1,47 +1,41 @@
+/* CyberRange lab helper. Contains no flag values: it asks the server,
+   which answers only for what the database shows was achieved. */
 (function () {
   "use strict";
 
-  function addFlag(id, value) {
-    var el = document.getElementById(id);
-    if (!el) {
-      el = document.createElement("div");
-      el.id = id;
-      el.style.display = "none";
-      document.body.appendChild(el);
+  var LABELS = { task4: "Task 4", task5: "Task 5", task6: "Task 6" };
+
+  function show(flags) {
+    var keys = Object.keys(flags || {});
+    if (!keys.length || !document.body) { return; }
+    var box = document.getElementById("xss-lab-flags");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "xss-lab-flags";
+      box.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:99999;" +
+        "background:#14202f;color:#fff;padding:10px 14px;border-radius:6px;" +
+        "font:14px/1.5 monospace;box-shadow:0 2px 8px rgba(0,0,0,.4)";
+      document.body.appendChild(box);
     }
-    el.textContent = value;
+    box.textContent = "";
+    keys.sort().forEach(function (k) {
+      var line = document.createElement("div");
+      line.id = "xss-" + k + "-flag";
+      line.textContent = (LABELS[k] || k) + " verification: " + flags[k];
+      box.appendChild(line);
+    });
   }
 
-  if (window.elgg && elgg.session && elgg.session.user) {
-    var user = elgg.session.user.username || "";
+  function check() {
+    fetch("/lab_check.php", { credentials: "same-origin", cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { show(d && d.flags); })
+      .catch(function () {});
+  }
 
-    /* Task 1-3: victim Alice has the per-sandbox values in cookies.
-       Students must use the XSS context to read them. */
-    if (user === "alice") {
-      document.cookie = "xss_task1={{ task1_flag }}; path=/";
-      document.cookie = "xss_task2={{ task2_flag }}; path=/";
-      document.cookie = "xss_task3={{ task3_flag }}; path=/";
-    }
-
-    /* Task 4: once Samy is visible in the user's friends page,
-       expose the task-specific confirmation value. */
-    if (user === "alice" && /friends/.test(location.pathname)) {
-      if (document.body && document.body.innerText.indexOf("Samy") !== -1) {
-        addFlag("xss-task4-flag", "{{ task4_flag }}");
-      }
-    }
-
-    /* Task 5: a marker in Alice's About Me demonstrates that the
-       profile-modification request reached the victim account. */
-    if (user === "alice" && document.body &&
-        document.body.innerText.indexOf("LAB5_PROFILE_UPDATED") !== -1) {
-      addFlag("xss-task5-flag", "{{ task5_flag }}");
-    }
-
-    /* Task 6: the DOM worm is required to carry this marker. */
-    if (document.body &&
-        document.body.innerHTML.indexOf("LAB6_XSS_WORM") !== -1) {
-      addFlag("xss-task6-flag", "{{ task6_flag }}");
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", check);
+  } else {
+    check();
   }
 })();
